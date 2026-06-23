@@ -21,6 +21,20 @@ app.post("/api/products", (req, res) => {
   res.status(201).json(newProduct);
 });
 
+app.put("/api/products/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, price, stock } = req.body;
+  db.prepare("UPDATE products SET name = ?, price = ?, stock = ? WHERE id = ?").run(name, price, stock, id);
+  const updatedProduct = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+  res.json(updatedProduct);
+});
+
+app.delete("/api/products/:id", (req, res) => {
+  const { id } = req.params;
+  db.prepare("DELETE FROM products WHERE id = ?").run(id);
+  res.status(204).end();
+});
+
 app.listen(PORT, () => {
   console.log(`서버 실행 중: http://localhost:${PORT}`);
 });
